@@ -1,0 +1,52 @@
+node_modules/
+.vscode/
+.vs
+.idea/
+cache/
+build/**
+build/
+build
+package-lock.json
+cypress/screenshots/
+cypress/videos/
+debug.log
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
+.vscode
+
+# OSX
+.DS_Store
+
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+#yarn
+yarn.lock
+yarn-error.log
