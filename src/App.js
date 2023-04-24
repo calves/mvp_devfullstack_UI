@@ -68,34 +68,6 @@ const maskData = (v) => {
       curSeconds;
   return dataFormatadaApi;
 };
-
-const dataSource = [
-  {
-    key: "1",
-    codigo: "982728",
-    titulo: "titulo teste 1",
-    descricao: "descricao do item 1",
-    status: "OK",
-    data: maskData("2002-12-30T12:10:50"),
-  },
-  {
-    key: "2",
-    codigo: "982729",
-    titulo: "titulo teste 2",
-    descricao: "descricao do item 2",
-    status: "OK",
-    data: maskData("2022-01-12T15:10:50"),
-  },
-  {
-    key: "3",
-    codigo: "982730",
-    titulo: "titulo teste 3",
-    descricao: "descricao do item 3",
-    status: "OK",
-    data: maskData("2023-04-20T16:10:50"),
-  },
-];
-
 const urlPrincipalAPI = "http://127.0.0.1:5000/tarefa/";
 
 function App() {
@@ -106,13 +78,9 @@ function App() {
     descricao: "",
     data: "",
   })
+  const [listaTarefas, setListaTarefas] = useState([])
 
   const columns = [
-    {
-      title: "Id",
-      dataIndex: "codigo",
-      key: "id",
-    },
     {
       title: "Título",
       dataIndex: "titulo",
@@ -132,6 +100,7 @@ function App() {
       title: "Data",
       dataIndex: "data",
       key: "data",
+      render: (data) => new Date(data).toLocaleDateString() + " às " + new Date(data).toLocaleTimeString()
     },
     {
       title: "Ação",
@@ -139,11 +108,11 @@ function App() {
       render: (e) => (
           <>
             <Button onClick={() => {
-              concluirTarefa(e.codigo)
+              concluirTarefa(e.id)
             }}> Concluir </Button>
 
             <Button onClick={() => {
-              deletarTarefa(e.codigo)
+              deletarTarefa(e.id)
             }}> Deletar </Button>
           </>
       ),
@@ -161,13 +130,10 @@ function App() {
   const adicionarTarefa = () => {
     //Adicionar chamada api, quando der 200 atualizado fica true
 
-    const url = urlPrincipalAPI;
-
-    //const body = {...body};
-
-    console.log(body)
+    const url = urlPrincipalAPI + "nova";
 
     axios.post(url, body).then((res) => {
+      setBody({data: new Date(), descricao: "", titulo: ""})
       fetchData();
     });
   };
@@ -180,7 +146,7 @@ function App() {
     const url = urlPrincipalAPI + "todas";
 
     axios.get(url).then((res) => {
-      console.log(res.data);
+      setListaTarefas(res.data);
     });
   };
 
@@ -214,8 +180,8 @@ function App() {
                     defaultValue={body.data}
                     showTime={{format: 'HH:mm'}}
                     placeholder="Start"
-                    allowClear={false}
-                    onOk={(date) => {
+                    allowClear={true}
+                    onChange={(date) => {
                       setBody({...body, data: new Date(date.$d).toISOString()})
                     }}
                 />
@@ -225,7 +191,7 @@ function App() {
               </Form.Item>
             </Form>
 
-            <Table dataSource={dataSource} columns={columns}/>
+            <Table dataSource={listaTarefas} columns={columns}/>
           </>
         </div>
       </>
