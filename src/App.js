@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {Button, DatePicker, Form, Input, Select, Table} from "antd";
+import {Button, DatePicker, Form, Input, Table} from "antd";
 import axios from "axios";
 
 const {RangePicker} = DatePicker;
@@ -80,7 +80,7 @@ const dataSource = [
   },
   {
     key: "2",
-    codigo: "982728",
+    codigo: "982729",
     titulo: "titulo teste 2",
     descricao: "descricao do item 2",
     status: "OK",
@@ -88,50 +88,11 @@ const dataSource = [
   },
   {
     key: "3",
-    codigo: "982728",
+    codigo: "982730",
     titulo: "titulo teste 3",
     descricao: "descricao do item 3",
     status: "OK",
     data: maskData("2023-04-20T16:10:50"),
-  },
-];
-
-const columns = [
-  {
-    title: "Id",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Título",
-    dataIndex: "titulo",
-    key: "titulo",
-  },
-  {
-    title: "Descrição",
-    dataIndex: "descricao",
-    key: "descricao",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-  },
-  {
-    title: "Data",
-    dataIndex: "data",
-    key: "data",
-  },
-  {
-    title: "Ação",
-    key: "acao",
-    render: () => (
-        <>
-          <Button> Concluir </Button>
-
-          <Button> Deletar </Button>
-        </>
-    ),
   },
 ];
 
@@ -140,13 +101,71 @@ const urlPrincipalAPI = "http://127.0.0.1:5000/tarefa/";
 function App() {
   const [dadosTabela, setDadosTabela] = useState([]);
   const [componentDisabled, setComponentDisabled] = useState(false);
+  const [body, setBody] = useState({
+    titulo: "",
+    descricao: "",
+    data: "",
+  })
+
+  const columns = [
+    {
+      title: "Id",
+      dataIndex: "codigo",
+      key: "id",
+    },
+    {
+      title: "Título",
+      dataIndex: "titulo",
+      key: "titulo",
+    },
+    {
+      title: "Descrição",
+      dataIndex: "descricao",
+      key: "descricao",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Data",
+      dataIndex: "data",
+      key: "data",
+    },
+    {
+      title: "Ação",
+      key: "acao",
+      render: (e) => (
+          <>
+            <Button onClick={() => {
+              concluirTarefa(e.codigo)
+            }}> Concluir </Button>
+
+            <Button onClick={() => {
+              deletarTarefa(e.codigo)
+            }}> Deletar </Button>
+          </>
+      ),
+    },
+  ];
+
+  const concluirTarefa = (id) => {
+    alert(`concluir tarefa com id ${id}`)
+  }
+
+  const deletarTarefa = (id) => {
+    alert(`deletar tarefa com id ${id}`)
+  }
 
   const adicionarTarefa = () => {
     //Adicionar chamada api, quando der 200 atualizado fica true
 
     const url = urlPrincipalAPI;
 
-    const body = {};
+    //const body = {...body};
+
+    console.log(body)
 
     axios.post(url, body).then((res) => {
       fetchData();
@@ -179,22 +198,27 @@ function App() {
                 disabled={componentDisabled}
                 style={{maxWidth: 600}}>
               <Form.Item label="Título">
-                <Input/>
+                <Input value={body.titulo} onChange={(e) => {
+                  setBody({...body, titulo: e.target.value})
+                }}/>
               </Form.Item>
               <Form.Item label="Descrição">
-                <Input/>
+                <Input value={body.descricao} onChange={(e) => {
+                  setBody({...body, descricao: e.target.value})
+                }}/>
               </Form.Item>
-              <Form.Item label="Status">
-                <Select>
-                  <Select.Option value="demo">Concluído</Select.Option>
-                  <Select.Option value="demo">Não concluído</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item label="Data">
-                <DatePicker/>
-              </Form.Item>
-              <Form.Item label="Hora">
-                <Input width="12"/>
+              <Form.Item label="Data & Hora">
+                <DatePicker
+
+                    format="DD/MM/YYYY HH:mm"
+                    defaultValue={body.data}
+                    showTime={{format: 'HH:mm'}}
+                    placeholder="Start"
+                    allowClear={false}
+                    onOk={(date) => {
+                      setBody({...body, data: new Date(date.$d).toISOString()})
+                    }}
+                />
               </Form.Item>
               <Form.Item>
                 <Button onClick={adicionarTarefa}>Adicionar</Button>
