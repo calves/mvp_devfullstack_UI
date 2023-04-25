@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {Button, DatePicker, Form, Input, Table} from "antd";
+import {Button, DatePicker, Form, Input, notification, Table} from "antd";
 import axios from "axios";
 
 const {RangePicker} = DatePicker;
@@ -83,13 +83,19 @@ function App() {
   const columns = [
     {
       title: "Título",
-      dataIndex: "titulo",
       key: "titulo",
+      render: (linha) => {
+        return linha.status === true ? <div style={{color: "green"}}>{linha.titulo}</div> :
+            <div style={{color: "red"}}>{linha.titulo}</div>
+      }
     },
     {
       title: "Descrição",
-      dataIndex: "descricao",
       key: "descricao",
+      render: (linha) => {
+        return linha.status === true ? <div style={{color: "green"}}>{linha.descricao}</div> :
+            <div style={{color: "red"}}>{linha.descricao}</div>
+      }
     },
     {
       title: "Status",
@@ -130,7 +136,7 @@ function App() {
   const concluirTarefa = (id) => {
     const url = urlPrincipalAPI + "finalizada/" + id;
     axios.put(url).then((res) => {
-      alert("Tarefa concluida com sucesso")
+      notification.success({message: "Tarefa concluida com sucesso"})
       fetchData();
     })
   }
@@ -138,7 +144,7 @@ function App() {
   const deletarTarefa = (id) => {
     const url = urlPrincipalAPI + "removida/" + id;
     axios.delete(url).then((res) => {
-      alert("Tarefa removida com sucesso")
+      notification.success({message: "Tarefa removida com sucesso"})
       fetchData();
     })
   }
@@ -151,11 +157,11 @@ function App() {
 
     axios.post(url, body).then((res) => {
       setBody({data: new Date(), descricao: "", titulo: ""});
-      alert("Tarefa gravada com sucesso")
+      notification.success({message: "Tarefa adicionada com sucesso"})
       fetchData();
     }).catch(erro => {
       let texto = erro.response.data
-      alert(texto);
+      notification.error({message: texto});
     })
 
   }
