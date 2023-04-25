@@ -95,6 +95,7 @@ function App() {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      render: (status) => status === 'False' ? 'Pendente' : 'Concluida'
     },
     {
       title: "Data",
@@ -103,28 +104,43 @@ function App() {
       render: (data) => new Date(data).toLocaleDateString() + " às " + new Date(data).toLocaleTimeString()
     },
     {
-      title: "Ação",
-      key: "acao",
+      title: "",
+      key: "acao_1",
       render: (e) => (
           <>
             <Button onClick={() => {
               concluirTarefa(e.id)
             }}> Concluir </Button>
-
+          </>
+      ),
+    },
+    {
+      title: "",
+      key: "acao_2",
+      render: (e) => (
+          <>
             <Button onClick={() => {
               deletarTarefa(e.id)
-            }}> Deletar </Button>
+            }}> Apagar </Button>
           </>
       ),
     },
   ];
 
   const concluirTarefa = (id) => {
-    alert(`concluir tarefa com id ${id}`)
+    const url = urlPrincipalAPI + "finalizada/" + id;
+    axios.put(url).then((res) => {
+      alert("Tarefa concluida com sucesso")
+      fetchData();
+    })
   }
 
   const deletarTarefa = (id) => {
-    alert(`deletar tarefa com id ${id}`)
+    const url = urlPrincipalAPI + "removida/" + id;
+    axios.delete(url).then((res) => {
+      alert("Tarefa removida com sucesso")
+      fetchData();
+    })
   }
 
   const adicionarTarefa = () => {
@@ -132,11 +148,17 @@ function App() {
 
     const url = urlPrincipalAPI + "nova";
 
+
     axios.post(url, body).then((res) => {
-      setBody({data: new Date(), descricao: "", titulo: ""})
+      setBody({data: new Date(), descricao: "", titulo: ""});
+      alert("Tarefa gravada com sucesso")
       fetchData();
-    });
-  };
+    }).catch(erro => {
+      let texto = erro.response.data
+      alert(texto);
+    })
+
+  }
 
   useEffect(() => {
     fetchData();
